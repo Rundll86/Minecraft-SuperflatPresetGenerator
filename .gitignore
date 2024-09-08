@@ -28,3 +28,8 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+src/assets/blocks/jarfile.jar
+src/assets/blocks/langfile.json
+src/assets/blocks/output.json
+src/assets/blocks/textures
+public/textures
