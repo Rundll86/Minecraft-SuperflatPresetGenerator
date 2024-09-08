@@ -8,12 +8,12 @@ import JustifyContent from "./componets/JustifyContent.vue";
 import { h, render } from "vue";
 import TextCenter from "./componets/TextCenter.vue";
 import blocks from "./assets/blocks/output.json";
+import Drawer from "./componets/Drawer.vue";
 const blockIDs = Object.keys(blocks);
 export default {
   methods: {
     addLayer() {
       let vnode = h(BlockLayer, { block: document.getElementById("selector").value });
-      console.log(vnode);
       this.$nextTick(() => {
         let temp = document.createElement("div");
         render(vnode, temp);
@@ -48,7 +48,33 @@ export default {
       };
       let result = preset.join(",");
       result += ";plains";
-      alert(result);
+      this.generatedPreset = result;
+    },
+    loadPreset() {
+      let preset = prompt("输入预设代码");
+      if (preset) {
+        let layersElement = document.getElementById('layers');
+        layersElement.innerHTML = "";
+        let layers = preset.split(";")[0].split(",");
+        for (let i = 0; i < layers.length; i++) {
+          let layer = layers[i].split("*");
+          let block;
+          let count;
+          if (layer.length == 1) {
+            block = layer[0];
+            count = 1;
+          } else {
+            block = layer[1];
+            count = layer[0];
+          }
+          block = block.replace(/minecraft:/g, "");
+          count = parseInt(count);
+          let vnode = h(BlockLayer, { block, count });
+          let temp = document.createElement('div');
+          render(vnode, temp);
+          layersElement.appendChild(temp.firstElementChild);
+        }
+      }
     },
     mergeLayersOneStep() {
       const layers = document.querySelectorAll('#layers > *');
@@ -72,6 +98,14 @@ export default {
       if (isMergedOne) {
         this.mergeLayersOneStep();
       }
+    },
+    copyCode() {
+      try {
+        navigator.clipboard.writeText(this.generatedPreset);
+        alert("代码已复制到剪贴板");
+      } catch {
+        alert("你的浏览器不支持复制代码，请手动选中复制");
+      }
     }
   },
   data() {
@@ -87,7 +121,8 @@ export default {
        * @type {CanvasRenderingContext2D}
        */
       canvasContext: null,
-      blockImages: {}
+      blockImages: {},
+      generatedPreset: ""
     };
   },
   mounted() {
@@ -108,14 +143,25 @@ export default {
     <AlignItems>
       <TextCenter>
         <JustifyContent id="panel">
-          <button @click="generatePreset">生成预设代码</button>
-          <button @click="mergeLayersOneStep">合并同类项</button>
+          <span :style="{
+            fontSize: '20px',
+            fontWeight: 'bold',
+          }">MSPG v1.2.0</span>
           <button @click="addLayer">添加层</button>
           <BlockSelector isSelector :nameFilter="nameFilter" id="block-selector" />
-          <input type="text" v-model="nameFilter" placeholder="搜索方块..." /><br>
-          预览世界尺寸：{{ previewWidth }}<input type="range" max="50" min="1" step="1" v-model="previewWidth" />
-          预览方块大小：{{ blockDrawWidth }}<input type="range" max="160" min="8" step="1" v-model="blockDrawWidth" />
-          <button @click="updatePreviewImages">生成预览</button>
+          <input type="text" v-model="nameFilter" placeholder="搜索方块..." />
+          <Drawer title="工具箱" :currentState="false">
+            <button @click="loadPreset">从代码加载预设</button>
+            <button @click="mergeLayersOneStep">合并同类项</button>
+            预览世界尺寸：{{ previewWidth }}格
+            <input type="range" max="50" min="1" step="1" v-model="previewWidth" />
+            预览方块大小：{{ blockDrawWidth }}px
+            <input type="range" max="160" min="1" step="1" v-model="blockDrawWidth" />
+            <button @click="updatePreviewImages">生成预览</button>
+            <button @click="generatePreset">生成预设代码</button>
+            <textarea disabled class="no-scroll" :style="{ height: '100px' }">{{ generatedPreset }}</textarea>
+            <button @click="copyCode">复制代码</button>
+          </Drawer>
         </JustifyContent>
       </TextCenter>
     </AlignItems>
@@ -128,15 +174,31 @@ export default {
     </div>
   </div>
   <canvas id="preview" ref="previewer"></canvas>
-  <!-- <div id="overlay" v-if="Object.keys(blockImages).length !== blockIDs.length">
-    <span>正在加载方块贴图，{{ Object.keys(blockImages).length }}/{{ blockIDs.length }}</span>
-  </div> -->
 </template>
 <style>
 * {
   margin: 0;
   padding: 0;
-  transition: all .1s ease-out;
+  transition: all .2s ease-out;
+  font-family: "Consolas", "Microsoft YaHei";
+  font-size: 12px;
+}
+
+*::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+.no-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 button {
@@ -195,14 +257,23 @@ img.previewer {
   border-radius: 10px;
   padding: 10px;
   backdrop-filter: blur(5px);
+  max-height: 70vh;
+  overflow-y: scroll
 }
 
 input[type="number"] {
   width: 40px;
 }
 
+textarea {
+  resize: none;
+  text-align: center;
+  padding: 5px;
+}
+
 input,
-select {
+select,
+textarea {
   border: gray 2px solid;
   border-radius: 5px;
   padding: 2px 4px;
@@ -211,8 +282,9 @@ select {
 
 input:hover,
 select:hover,
-input:focus,
-select:focus {
+textarea:hover input:focus,
+select:focus,
+textarea:focus {
   border-color: rgb(54, 54, 54);
 }
 
