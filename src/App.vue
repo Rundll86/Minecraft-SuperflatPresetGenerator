@@ -97,10 +97,9 @@ export default {
     blockIDs.forEach(block => {
       const img = new Image();
       img.src = `/textures/${block}.png`;
-      img.addEventListener("load", () => {
-        this.blockImages[block] = img;
-      });
+      this.blockImages[block] = img;
     });
+    this.mergeLayersOneStep();
   }
 }
 </script>
@@ -110,27 +109,28 @@ export default {
       <TextCenter>
         <JustifyContent id="panel">
           <button @click="generatePreset">生成预设代码</button>
-          <button @click="updatePreviewImages">生成预览</button>
           <button @click="mergeLayersOneStep">合并同类项</button>
           <button @click="addLayer">添加层</button>
           <BlockSelector isSelector :nameFilter="nameFilter" id="block-selector" />
           <input type="text" v-model="nameFilter" placeholder="搜索方块..." /><br>
           预览世界尺寸：{{ previewWidth }}<input type="range" max="50" min="1" step="1" v-model="previewWidth" />
           预览方块大小：{{ blockDrawWidth }}<input type="range" max="160" min="8" step="1" v-model="blockDrawWidth" />
+          <button @click="updatePreviewImages">生成预览</button>
         </JustifyContent>
       </TextCenter>
     </AlignItems>
     <br>
     <div id="layers">
       <BlockLayer block="bedrock" />
-      <BlockLayer block="dirt" count="2" />
+      <BlockLayer block="dirt" />
+      <BlockLayer block="dirt" />
       <BlockLayer block="grass_block" />
     </div>
   </div>
   <canvas id="preview" ref="previewer"></canvas>
-  <div id="overlay" v-if="Object.keys(blockImages).length !== blockIDs.length">
+  <!-- <div id="overlay" v-if="Object.keys(blockImages).length !== blockIDs.length">
     <span>正在加载方块贴图，{{ Object.keys(blockImages).length }}/{{ blockIDs.length }}</span>
-  </div>
+  </div> -->
 </template>
 <style>
 * {

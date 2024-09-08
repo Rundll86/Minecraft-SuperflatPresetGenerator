@@ -18,7 +18,9 @@ npm install
 
 3.打开 `.minecraft/assets/objects`，搜索以刚获得的hash值作为名称的文件，将结果复制 `./src/assets/blocks` 中，将其命名为 `langfile.json`
 
-4.运行 `./src/assets/blocks/extractor.py`，将会输出 `output.json` 与 `textures` 目录，将`textures`移动或复制到 `./public` 中
+4.运行 `./src/assets/blocks/extractor.py`，将会自动生成贴图表与方块表
+
+5.如果部分方块缺失信息（如TNT和草方块），打开 `./src/assets/blocks/alias.json`，将缺失的方块名添加到别名表中，重复第四步即可
 ### 打包
 ```bash
 npm run build

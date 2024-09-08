@@ -1,0 +1,12 @@
+[
+    {
+        "id": "grass_block",
+        "name": "草方块",
+        "texture": "grass_block_side"
+    },
+    {
+        "id": "tnt",
+        "name": "TNT",
+        "texture": "tnt_side"
+    }
+]
