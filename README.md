@@ -8,9 +8,7 @@ npm install
 ```
 ### 生成贴图表与方块表
 #### A计划，版本为Java1.21.1
-1.下载Release中的 `textures.zip`，解压到 `./public/textures` 中
-
-2.下载Release中的 `output.json`，复制或移动到 `./src/assets/blocks` 中
+1.下载Release中的 `BlockSheetsAndTextureSheets.zip`，解压到根目录中
 #### 如果需要生成其他版本的方块表，使用下面的B计划
 1.将你的Minecraft客户端jar文件复制到 `./src/assets/blocks` 中，将其重命名为 `jarfile.jar`
 
