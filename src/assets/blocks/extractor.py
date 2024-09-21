@@ -38,7 +38,7 @@ for i in alias:
 shutil.copytree("textures", "../../../public/textures", dirs_exist_ok=True)
 langfile: dict = json.load(open("langfile.json", encoding="utf-8"))
 for i in resultlist:
-    currentID: str = os.path.splitext(os.path.basename(i))[0]
+    currentID: str = os.path.splitext(os.path.basename(i))[0].strip("_side")
     currentName = langfile.get(f"block.minecraft.{currentID}")
     if currentName:
         output[currentID] = currentName

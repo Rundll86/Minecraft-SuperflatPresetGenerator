@@ -1,12 +1,7 @@
 [
     {
-        "id": "grass_block",
-        "name": "草方块",
-        "texture": "grass_block_side"
-    },
-    {
-        "id": "tnt",
-        "name": "TNT",
-        "texture": "tnt_side"
+        "id": "lava",
+        "name": "熔岩/岩浆",
+        "texture": "lava_bucket"
     }
 ]
